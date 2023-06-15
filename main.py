@@ -1,6 +1,16 @@
 # Подключение основных модулей
 import requests
 from bs4 import BeautifulSoup as b
+import sqlite3 as sq
+
+
+with sq.connect("jok.db") as con:
+    cur = con.cursor()
+
+    cur.execute("""CREATE TABLE IF NOT EXISTS joktext (
+    text TEXT NOT NULL,
+    send INTEGER NOT NULL DEFAULT 0
+    )""")
 
 
 # Заполнение переменных ссылки и масива анегдотов
@@ -36,13 +46,17 @@ def printJog2(jog):
             if i == "-" and num >= 1 and li[num+1] == ' ':
                 li[num] = "\n-"
 
-            if i == "—" and num >= 1 and li[num+1] == ' 'g:
+            if i == "—" and num >= 1 and li[num+1] == ' ':
                 li[num] = "\n-"
             elif i == "—":
                 li[num] = "-"
             num += 1
 
-        result = ''.join(li)  # AABAAAAAАA
+        result = ''.join(li)
+
+        with sq.connect("jok.db") as con2:
+            cur2 = con2.cursor()
+            cur2.execute(f"INSERT INTO joktext (text) VALUES ('{str(result)}')")
 
         print(result + "\n")
 
